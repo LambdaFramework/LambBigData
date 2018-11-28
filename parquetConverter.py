@@ -245,7 +245,7 @@ def convetq(infile, outfile):
             start = timer()
             #for element in main:
             #            df1.append(pd.DataFrame(pd.Series([x for x in eventTree.arrays("%s" %element)["%s" %element]], name='%s' %element)))
-            df1.append(pd.DataFrame(eventTree.arrays(main1)))
+            #df1.append(pd.DataFrame(eventTree.arrays(main1)))
             end2 = timer(); print "Exhausted ", (end2 - start)/60, "mins"
             
             #Convert bools JaggedArray into int
@@ -268,7 +268,7 @@ def convetq(infile, outfile):
             
             #Concatenate all element in DF list
             print "STATUS: Concatenate all element in DF list"
-            concat_df = pd.concat(df1)
+            concat_df = pd.concat(df1, axis=1)
             end5 = timer(); print "Exhausted ", (end5 - end4)/60, "mins"
             
             #Convert to table
