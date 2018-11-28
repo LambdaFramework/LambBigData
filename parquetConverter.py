@@ -1,9 +1,4 @@
-#!/bin/pythonA
-
-#import optparse
-#usage = "usage: %prog [options]"
-#parser = optparse.OptionParser(usage)
-#parser.add_option("-v", "--variable", action="store", type="string", dest="variable", default="")
+#!/bin/python
 
 import os
 import uproot
@@ -24,6 +19,16 @@ parser = optparse.OptionParser(usage)
 parser.add_option("-i", "--inFile", action="store", type="string", dest="inFile", default="")
 parser.add_option("-o", "--outFile", action="store", type="string", dest="outFile", default="")
 (options, args) = parser.parse_args()
+
+path = os.getcwd()
+if len(options.outFile) == 0 or os.path.exists(options.outFile):
+    print '--- ERROR ---'
+    print '  \''+options.outFile+'\' folder already exists or is null!'
+    print '  please delete it or use a different name using option \'-o FOLDER-NAME\''
+    print
+    exit()
+    
+os.system('mkdir '+options.outFile)
 
 main=[
     'nElectron',
@@ -179,6 +184,16 @@ main=[
 #    'Muon_cleanmask',
 ]
 
+main1=[
+    'Electron_genPartIdx',
+    'Electron_genPartFlav',
+    'GenJetAK8_partonFlavour',
+    'GenJetAK8_hadronFlavour',
+    'GenJet_partonFlavour',
+    'GenJet_hadronFlavour',
+    'Jet_genJetIdx',
+    ]
+
 globo=[
     'HLT_Ele25_WPTight_Gsf',
     'HLT_Ele27_eta2p1_WPLoose_Gsf',
@@ -205,34 +220,32 @@ lobo= [
     'Muon_mediumId',
     'Muon_softId',
     'Muon_tightId',
-    'Muon_isPFcand',
-    'Electron_convVeto',
-    'Electron_cutBased_HEEP',
-    'Electron_isPFcand',
-    'Electron_mvaSpring16GP_WP80',
-    'Electron_mvaSpring16GP_WP90',
-    'Electron_mvaSpring16HZZ_WPL',
+#    'Muon_isPFcand',
+#    'Electron_convVeto',
+#    'Electron_cutBased_HEEP',
+#    'Electron_isPFcand',
+#    'Electron_mvaSpring16GP_WP80',
+#    'Electron_mvaSpring16GP_WP90',
+#    'Electron_mvaSpring16HZZ_WPL',
     'Electron_cutBased',
-    'Electron_cutBased_HLTPreSel',
+#    'Electron_cutBased_HLTPreSel',
 ]
 
-counter=0
-for file in os.listdir("/Users/shoh/Projects/CMS/PhD/Analysis/SSL/dataset-v12-VH/"):
-            counter+=1
-            if ".root" not in file: continue
-            #start_time = time.time()
-	    openFile= uproot.open("/Users/shoh/Projects/CMS/PhD/Analysis/SSL/dataset-v12-VH/%s" %file)
-	    #NAME=openFile.__dict__['name'].split('.')[0]
+def convetq(infile, outfile):
+
+	    openFile= uproot.open("%s" %infile)
             eventTree=openFile["Events"]
 	    print "STATUS: Processing root file ", file
-            NAME=file.split('.')[0]
+            NAME=infile.split('/')[-1].split('.')[0]
             print "NAME = ", NAME
             df1=[]
 
             #Extract Main scheme
             print "STATUS: Extract Main scheme"
             start = timer()
-            df1.append(pd.DataFrame.from_dict(eventTree.arrays(main)))
+            #for element in main:
+            #            df1.append(pd.DataFrame(pd.Series([x for x in eventTree.arrays("%s" %element)["%s" %element]], name='%s' %element)))
+            df1.append(pd.DataFrame(eventTree.arrays(main1)))
             end2 = timer(); print "Exhausted ", (end2 - start)/60, "mins"
             
             #Convert bools JaggedArray into int
@@ -240,17 +253,17 @@ for file in os.listdir("/Users/shoh/Projects/CMS/PhD/Analysis/SSL/dataset-v12-VH
             for element in lobo:
                         event=[]
                         for jaggedElement in eventTree.arrays("%s" %element)["%s" %element]:
-                                    eventlet=[]
-                        for num,eve in enumerate(jaggedElement):
-                                    eventlet.append(1*eve)
-                        event.append(eventlet)
+                            eventlet=[]
+                            for num,eve in enumerate(jaggedElement):
+                                eventlet.append(1*eve)
+                            event.append(eventlet)
                         df1.append(pd.DataFrame(pd.Series([x for x in awkward.JaggedArray.fromiter(event)], name='%s' %element)))
             end3 = timer(); print "Exhausted ", (end3 - end2)/60, "mins"
             
             #Convert bools Array into int
             print "STATUS: Convert bools Array into int Array"
             for element in globo:
-                        df1.append(pd.DataFrame(pd.Series([1*x for x in eventTree.arrays("%s" %element)["%s" %element]], name='%s' %element)))
+                df1.append(pd.DataFrame(pd.Series([1*x for x in eventTree.arrays("%s" %element)["%s" %element]], name='%s' %element)))
             end4 = timer(); print "Exhausted ", (end4 - end3)/60, "mins"
             
             #Concatenate all element in DF list
@@ -265,6 +278,8 @@ for file in os.listdir("/Users/shoh/Projects/CMS/PhD/Analysis/SSL/dataset-v12-VH
             
             #SaveAs Parquet
             print "STATUS: SaveAs Parquet"
-            pq.write_table(table, '/Users/shoh/Projects/CMS/PhD/Analysis/SSL/NanoaodParquet/%s.parquet' %NAME)
+            pq.write_table(table, '%s/%s.parquet' %(outfile,NAME))
             end7 = timer(); print "Exhausted ", (end7 - end6)/60, "mins"
-            if counter==1: exit()
+
+
+convetq(options.inFile,options.outFile)
