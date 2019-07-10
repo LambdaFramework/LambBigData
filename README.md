@@ -19,4 +19,12 @@ Setup the proxy configuration in your favorite browser
 
 ![Alt text](https://github.com/LambdaFramework/LambBigData/blob/dev/browser.png)
 
+### Launch Jupyter notebook
+
+```
+jupyter notebook --ip 127.0.0.1 --port 1122 --no-browser
+```
+
+Copy the link into the browser.
+
 ## Bon
