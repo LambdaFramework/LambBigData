@@ -21,19 +21,13 @@ Pick a port number , example 1122 and change to your username. After that browse
 
 ### Working remotely (Double ssh tunnel)
 
-You need to setup a double SSH tunnel, from local pc --> host1 --> host2 with:
+You need to setup a double SSH tunnel, from local pc <---> ```hoh@gate.pd.infn.it``` <---> ```shoh@10.64.22.135``` with:
 
 ```
-ssh -D localhost:1122 hoh@gate.pd.infn.it
+ssh -D 11223 -J hoh@gate.pd.infn.it shoh@10.64.22.135
 ```
 
-Pick a port number, example 1122 and change to	your username. We accessing Padova network via the PD gate. While logged into the gate, issue the next command:
-
-```
-ssh -D localhost:1234 shoh@10.64.22.135
-```
-
-After that browse ```http://10.64.22.135:8080/``` in your browser.
+Pick a port number, example ```11223``` and change to	your username. In your local PC, go to browser Network Setting, check box Manual proxy configuration, insert ```127.0.0.1``` in SOCK host, follow by insert the favourite port number. If everything in place, browsing ```http://10.64.22.135:8080/``` will guide you to SPARK WEB UI.
 
 # Jupyter Notebook
 
