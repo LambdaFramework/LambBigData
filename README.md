@@ -52,7 +52,7 @@ ssh -D 11223 -J hoh@gate.pd.infn.it shoh@10.64.22.135
 While logged inside the cluster, execute
 
 ```
-jupyter notebook --no-browser --port=1234 --ip=127.0.0.1 --allow-root
+jupyter notebook --no-browser --port=11223 --ip=127.0.0.1 --allow-root
 ```
 
 The authentication token will be revealed as an	URL, copy and paste it in your browser. To shutdown the	kernal,	simply issue CTRL-C to the termimal.
