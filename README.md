@@ -56,3 +56,19 @@ jupyter notebook --no-browser --port=11223 --ip=127.0.0.1 --allow-root
 ```
 
 The authentication token will be revealed as an	URL, copy and paste it in your browser. To shutdown the	kernal,	simply issue CTRL-C to the termimal.
+
+# To-do list
+
+There is three aproach to go about ingesting root format data:
+  - parquet the dataset (manual partition)
+  - via uproot (manual partition)
+  - via sparkroot (auto partition; still prototype)
+
+Foreseen to-do list:
+ - [ ] accomodate different spark version (currently hard-coded, could be done via docker)
+ - [ ] Xrootd serving protocal with grid cert
+ - [ ] Data ingestion
+ - [ ] Nanoaod postprocessing (without root)
+ - [ ] Plotting (without root)
+ - [ ] Combine datacard
+ - [ ] how to benchmark spark performance?
